@@ -1,0 +1,15 @@
+body {
+    font-family: Arial, sans-serif;
+}
+.container {
+    width: 80%;
+    margin: auto;
+}
+.note-list {
+    margin-top: 20px;
+}
+.note {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}

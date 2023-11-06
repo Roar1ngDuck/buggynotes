@@ -1,0 +1,32 @@
+<!-- templates/notes/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes</title>
+    
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Notes</h1>
+
+    <!-- List all notes -->
+    <div class="note-list">
+        {% for note in notes %}
+            <div class="note">
+                <h2>{{ note.title }}</h2>
+                <p>{{ note.content|linebreaks }}</p>
+                <p><a href=/note/{{ note.id }}>View Note</a></p>
+            </div>
+        {% empty %}
+            <p>No notes available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>
