@@ -14,6 +14,12 @@
 <div class="container">
     <h1>Notes</h1>
 
+    <!-- Logout Button -->
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+
     <!-- List all notes -->
     <div class="note-list">
         {% for note in notes %}
