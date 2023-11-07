@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Notes</title>
-    
-    {% load static %}
+{% extends 'notes/base.html' %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-<h1>BuggyNotes</h1>
+{% block title %}BuggyNotes{% endblock %}
 
-<div class="container">
+{% block content %}
     <h1>Notes</h1>
 
     <!-- Logout Button -->
@@ -40,7 +31,4 @@
             <p>No notes available.</p>
         {% endfor %}
     </div>
-</div>
-
-</body>
-</html>
+{% endblock %}

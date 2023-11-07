@@ -1,31 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>View Note</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-<h1>BuggyNotes</h1>
+{% extends 'notes/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
 
 {% if form.errors %}
   <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
-
 <div class="login-parent">
   <div class="login-container">
     <form method="post" action="{% url 'login' %}">
       {% csrf_token %}
       <p><label for="id_username">Username:</label> <input type="text" name="username" id="id_username"></p>
       <p><label for="id_password">Password:</label> <input type="password" name="password" id="id_password"></p>
-    
       <input type="submit" value="Login" />
       <input type="hidden" name="next" value="{{ next }}">
     </form>
-    
     <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
   </div>
 </div>
-</body>
-</html>
+{% endblock %}
