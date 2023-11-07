@@ -7,6 +7,7 @@ from django.views import generic
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, get_object_or_404, render
 from django.template import Context, Template
+from django.utils.safestring import mark_safe
 
 @login_required
 def index(request):
@@ -16,7 +17,8 @@ def index(request):
 
 @login_required
 def view_note(request, note_id):
-    note = get_object_or_404(Note, id=note_id, owner=request.user)  # Ensure the note belongs to the logged-in user
+    note = get_object_or_404(Note, id=note_id) # The owner of the note is not checked here, creating a case of broken access control
+    #note = get_object_or_404(Note, id=note_id, owner=request.user)  # Ensure the note belongs to the logged-in user
 
     if request.method == 'POST':
         # Update note with form data
