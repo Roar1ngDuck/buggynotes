@@ -9,6 +9,9 @@ from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib import messages
 import pickle
 import json
+import bleach
+from lxml import etree
+import io
 
 @login_required
 def index(request):
@@ -25,11 +28,66 @@ def view_note(request, note_id):
         # Update note with form data
         note.title = request.POST.get('title')
         note.content = request.POST.get('content')
+        note.is_drawn = False
         note.save()
         # Redirect to note listing view after saving
         return redirect('index')
     else:
         return render(request, 'notes/view_note.html', {'note': note})
+
+@login_required
+def view_drawn_note(request, note_id):
+    note = get_object_or_404(Note, id=note_id, owner=request.user)  # Ensure the note belongs to the logged-in user
+    if request.method == 'POST':
+        # Update note with form data
+        note.title = request.POST.get('title')
+        svg_content = request.POST.get('content')
+
+        # The 'sanitize_svg' function will sanitize the given SVG file by having a whitelist of permitted XML properties. 
+        # Without sanitizing, even if the XXE vulnerability in 'optimize_svg' is fixed, there will still be a XSS vulnerability here.
+        # svg_content = sanitize_svg(svg_content)
+        print("before:", svg_content)
+        svg_content = optimize_svg(svg_content)
+        print("content:",svg_content)
+
+        note.content = svg_content
+        note.is_drawn = True
+        note.save()
+        # Redirect to note listing view after saving
+        return redirect('index')
+    else:
+        return render(request, 'notes/view_drawn_note.html', {'note': note})
+
+# Function to sanitize SVG
+def sanitize_svg(svg_content):
+    ALLOWED_TAGS = ['svg', 'path']
+    ALLOWED_ATTRS = {
+        'svg': ['xmlns', 'version', 'id', 'xml:space'],
+        'path': ['fill', 'stroke', 'stroke-width', 'd'],
+        }
+    
+    return bleach.clean(svg_content, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS)
+
+def optimize_svg(svg_content):
+    # This function optimizes an SVG file by removing comments and unnecessary whitespaces.
+    # It also introduces an XXE vulnerability by allowing DTD loading and entity resolution.
+    # The etree.XMLParser by default allows DTD loading and entity resolution, so if they are not disabled, it will be vulnerable to XXE.
+    try:
+        parser = etree.XMLParser(remove_comments=True)
+        #parser = etree.XMLParser(remove_comments=True, resolve_entities=False, load_dtd=False) # Disable DTD loading and entity resolution
+        tree = etree.fromstring(svg_content, parser=parser)
+
+        # Strip unnecessary whitespace
+        for element in tree.iter():
+            if element.tail is not None:
+                element.tail = element.tail.strip()
+            if element.text is not None:
+                element.text = element.text.strip()
+
+        optimized_svg = etree.tostring(tree, pretty_print=False, method="xml")
+        return optimized_svg.decode("utf-8")
+    except etree.XMLSyntaxError as e:
+        return "Invalid SVG file: " + str(e)
 
 @login_required
 def create_note(request):
@@ -39,6 +97,20 @@ def create_note(request):
         new_note.save()
         # Redirect to the edit page for the new note.
         return redirect('view_note', new_note.id)
+    else:
+        # If someone tries to access this URL with GET, redirect them to the index page.
+        return redirect('index')
+    
+@login_required
+def create_drawn_note(request):
+    if request.method == 'POST':
+        # Create a new blank Note object and save it.
+        new_note = Note(owner=request.user)
+        new_note.is_drawn = True
+        new_note.content = """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="SVG" xml:space="preserve"></svg>"""
+        new_note.save()
+        # Redirect to the edit page for the new note.
+        return redirect('view_drawn_note', new_note.id)
     else:
         # If someone tries to access this URL with GET, redirect them to the index page.
         return redirect('index')

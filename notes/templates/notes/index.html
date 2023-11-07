@@ -12,6 +12,12 @@
             <button type="submit">New Note</button>
         </form>
 
+        <!-- New Drawn Note Button -->
+        <form action="{% url 'create_drawn_note' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">New Drawn Note</button>
+        </form>
+
         <!-- Backup Notes Button -->
         <form action="{% url 'backup_notes' %}" method="post">
             {% csrf_token %}
@@ -40,7 +46,13 @@
                 <!-- The 'safe' filter used here makes Django not escape the user inputted string, causing a cross site scripting (XSS) vulnerability -->
                 <p>{{ note.content|safe|linebreaks }}</p>
                 <!-- <p>{{ note.content|linebreaks }}</p> -->
+                {% if not note.is_drawn %}
                 <p><a href={% url 'view_note' note.id %}>View Note</a></p>
+                {% endif %}
+                {% if note.is_drawn %}
+                <p><a href={% url 'view_drawn_note' note.id %}>View Drawn Note</a></p>
+                {% endif %}
+                
             </div>
         {% empty %}
             <p>No notes available.</p>

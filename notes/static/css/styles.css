@@ -82,3 +82,15 @@ input[type="submit"]:hover, button:hover {
 .red:hover {
     background-color: #803f35;
 }
+
+#SVG{
+    background-color: white;
+    border: 1px solid;
+    width: 50em;
+    height: 30em;
+  }
+  
+  .path{
+    fill: none;
+    stroke: #fff;
+  }
