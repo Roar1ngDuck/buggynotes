@@ -25,7 +25,9 @@
         {% for note in notes %}
             <div class="note">
                 <h2>{{ note.title }}</h2>
-                <p>{{ note.content|linebreaks }}</p>
+                <!-- The 'safe' filter used here makes Django not escape the user inputted string, causing a cross site scripting (XSS) vulnerability -->
+                <p>{{ note.content|safe|linebreaks }}</p>
+                <!-- <p>{{ note.content|linebreaks }}</p> -->
                 <p><a href={% url 'view_note' note.id %}>View Note</a></p>
             </div>
         {% empty %}
