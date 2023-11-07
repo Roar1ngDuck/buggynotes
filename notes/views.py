@@ -42,6 +42,16 @@ def create_note(request):
         # If someone tries to access this URL with GET, redirect them to the index page.
         return redirect('index')
 
+@login_required
+def delete_note(request, note_id):
+    if request.method == 'POST':
+        note = get_object_or_404(Note, pk=note_id, owner=request.user)  # Ensure the note belongs to the logged-in user
+        note.delete()
+        return redirect('index')
+    else:
+        # If someone tries to access this URL with GET, redirect them to the index page.
+        return redirect('index')
+
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('index')  # Redirect to login page after signup
