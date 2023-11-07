@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib import messages
 import pickle
+import json
 
 @login_required
 def index(request):
@@ -58,8 +59,9 @@ def backup_notes(request):
         # Query all notes for the current user (assuming there is a user field in Note model)
         notes = Note.objects.filter(owner=request.user)
         
-        # Serialize the notes with pickle
+        # Serialize the notes with pickle. Using pickle leads to an insecure deserialization vulnerability in load backup.
         serialized_notes = pickle.dumps(list(notes.values()))
+        #serialized_notes = json.dumps(list(notes.values())) # Python json module is secure by default
 
         # Create an HTTP response with the pickled data as an attachment
         response = HttpResponse(serialized_notes, content_type='application/octet-stream')
@@ -76,8 +78,10 @@ def load_backup(request):
         backup_file = request.FILES.get('backup_file')
         
         if backup_file:
-            # Deserialize the notes from the uploaded file
+            # Deserialize the notes from the uploaded file. Unpickling malicious data causes arbitrary code execution.
+            # This can be fixed by using a secure alternative unpickling library, or by using the standard python json module, which is secure by default.
             notes_data = pickle.load(backup_file)
+            #notes_data = json.load(backup_file) #  # Python json library is secure by default
 
             for note_data in notes_data:
                 print(note_data)
