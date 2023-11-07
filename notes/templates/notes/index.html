@@ -20,6 +20,12 @@
         <button type="submit">Logout</button>
     </form>
 
+    <!-- New Note Button -->
+    <form action="{% url 'create_note' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">New Note</button>
+    </form>
+
     <!-- List all notes -->
     <div class="note-list">
         {% for note in notes %}

@@ -30,6 +30,18 @@ def view_note(request, note_id):
     else:
         return render(request, 'notes/view_note.html', {'note': note})
 
+@login_required
+def create_note(request):
+    if request.method == 'POST':
+        # Create a new blank Note object and save it.
+        new_note = Note(owner=request.user)
+        new_note.save()
+        # Redirect to the edit page for the new note.
+        return redirect('view_note', new_note.id)
+    else:
+        # If someone tries to access this URL with GET, redirect them to the index page.
+        return redirect('index')
+
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('index')  # Redirect to login page after signup
