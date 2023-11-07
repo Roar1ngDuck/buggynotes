@@ -6,8 +6,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, get_object_or_404, render
-from django.template import Context, Template
-from django.utils.safestring import mark_safe
+from django.contrib import messages
+import pickle
 
 @login_required
 def index(request):
@@ -50,6 +50,47 @@ def delete_note(request, note_id):
         return redirect('index')
     else:
         # If someone tries to access this URL with GET, redirect them to the index page.
+        return redirect('index')
+
+def backup_notes(request):
+    # Make sure this view is only accessible by a POST request
+    if request.method == 'POST':
+        # Query all notes for the current user (assuming there is a user field in Note model)
+        notes = Note.objects.filter(owner=request.user)
+        
+        # Serialize the notes with pickle
+        serialized_notes = pickle.dumps(list(notes.values()))
+
+        # Create an HTTP response with the pickled data as an attachment
+        response = HttpResponse(serialized_notes, content_type='application/octet-stream')
+        response['Content-Disposition'] = 'attachment; filename="notes_backup.bak"'
+
+        return response
+    else:
+        # If not a POST request, redirect to the home page or handle as necessary
+        return redirect('/')
+    
+def load_backup(request):
+    if request.method == 'POST':
+        # Get the uploaded file
+        backup_file = request.FILES.get('backup_file')
+        
+        if backup_file:
+            # Deserialize the notes from the uploaded file
+            notes_data = pickle.load(backup_file)
+
+            for note_data in notes_data:
+                print(note_data)
+                # Create new Note instances or update existing ones
+                unique = {'id': note_data['id']}
+                Note.objects.update_or_create(defaults=note_data, **unique)
+            messages.success(request, 'Backup loaded successfully.')
+        else:
+            messages.error(request, 'No file was uploaded.')
+
+        return redirect('index')
+    else:
+        # Redirect to home if not a POST request
         return redirect('index')
 
 class SignUpView(generic.CreateView):

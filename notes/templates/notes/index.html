@@ -17,6 +17,19 @@
         <button type="submit">New Note</button>
     </form>
 
+    <!-- Backup Notes Button -->
+    <form action="{% url 'backup_notes' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Create Backup</button>
+    </form>
+
+    <!-- Load Backup Button and File Input -->
+    <form action="{% url 'load_backup' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="backup_file" required>
+        <button type="submit">Load Backup</button>
+    </form>
+
     <!-- List all notes -->
     <div class="note-list">
         {% for note in notes %}
