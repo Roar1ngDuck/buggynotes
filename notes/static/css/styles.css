@@ -1,10 +1,11 @@
 html, body {
     font-family: Arial, sans-serif;
     color-scheme: dark;
-    background-color: #181a1b;
+    background-color: #131e24;
     border-color: #736b5e;
     color: #e8e6e3;
 }
+
 .container {
     width: 80%;
     margin: auto;
@@ -34,7 +35,7 @@ input[type="text"], input[type="password"], textarea {
 
 input[type="submit"], button {
     min-width: 8em;
-    background-color: #4b71c7;
+    background-color: #425093;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
@@ -44,7 +45,7 @@ input[type="submit"], button {
 }
 
 input[type="submit"]:hover, button:hover {
-    background-color: #3356aa;
+    background-color: rgb(35, 61, 122);
 }
 
 .login-parent {
@@ -75,9 +76,9 @@ input[type="submit"]:hover, button:hover {
 }
 
 .red {
-    background-color: #b94c4c;
+    background-color: #a15145;
 }
 
 .red:hover {
-    background-color: #963535;
+    background-color: #803f35;
 }
