@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Note</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+</head>
+<body>
+<h1>BuggyNotes</h1>
+
+<div class="container">
+    <h1>Editing Note: {{ note.title }}</h1>
+
+    <!-- Back Button -->
+    <p><a href="{% url 'index' %}">Back to Notes List</a></p>
+
+    <!-- Note Form -->
+    <form action="{% url 'view_note' note.id %}" method="post">
+        {% csrf_token %}
+        <div class="note">
+            <label for="title">Title:</label><br>
+            <input type="text" id="title" name="title" value="{{ note.title }}" required><br>
+
+            <label for="content">Content:</label><br>
+            <textarea class="note-content" id="content" name="content" required>{{ note.content }}</textarea><br>
+
+            <button type="submit">Save</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Note
 from django.contrib.auth.decorators import login_required
@@ -6,17 +5,28 @@ from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404, render
+from django.template import Context, Template
 
 @login_required
 def index(request):
-    notes = [
-    Note(id=1, title="Grocery List", content="Milk, Eggs, Bread, Butter, Apples"),
-    Note(id=2, title="Workout Routine", content="Monday: Chest\nTuesday: Back\nWednesday: Rest\nThursday: Arms\nFriday: Legs"),
-    Note(id=3, title="Book Recommendations", content="1. '1984' by George Orwell\n2. 'To Kill a Mockingbird' by Harper Lee\n3. 'The Great Gatsby' by F. Scott Fitzgerald")
-]
-
+    notes = request.user.notes.all()
+    
     return render(request, "notes/index.html", {'notes': notes})
+
+@login_required
+def view_note(request, note_id):
+    note = get_object_or_404(Note, id=note_id, owner=request.user)  # Ensure the note belongs to the logged-in user
+
+    if request.method == 'POST':
+        # Update note with form data
+        note.title = request.POST.get('title')
+        note.content = request.POST.get('content')
+        note.save()
+        # Redirect to note listing view after saving
+        return redirect('index')
+    else:
+        return render(request, 'notes/view_note.html', {'note': note})
 
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
