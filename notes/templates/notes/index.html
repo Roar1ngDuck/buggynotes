@@ -5,30 +5,32 @@
 {% block content %}
     <h1>Notes</h1>
 
-    <!-- Logout Button -->
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Logout</button>
-    </form>
+    <div class="buttons-container">
+        <!-- New Note Button -->
+        <form action="{% url 'create_note' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">New Note</button>
+        </form>
 
-    <!-- New Note Button -->
-    <form action="{% url 'create_note' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">New Note</button>
-    </form>
+        <!-- Backup Notes Button -->
+        <form action="{% url 'backup_notes' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Create Backup</button>
+        </form>
 
-    <!-- Backup Notes Button -->
-    <form action="{% url 'backup_notes' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Create Backup</button>
-    </form>
+        <!-- Load Backup Button and File Input -->
+        <form id="loadBackupForm" action="{% url 'load_backup' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" id="backupFileInput" name="backup_file" style="display: none;" onchange="document.getElementById('loadBackupForm').submit();" required>
+            <button type="button" onclick="document.getElementById('backupFileInput').click();">Load Backup</button>
+        </form>
 
-    <!-- Load Backup Button and File Input -->
-    <form action="{% url 'load_backup' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="backup_file" required>
-        <button type="submit">Load Backup</button>
-    </form>
+        <!-- Logout Button -->
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button class="red" type="submit">Logout</button>
+        </form>
+    </div>
 
     <!-- List all notes -->
     <div class="note-list">

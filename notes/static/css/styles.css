@@ -1,5 +1,9 @@
-body {
+html, body {
     font-family: Arial, sans-serif;
+    color-scheme: dark;
+    background-color: #181a1b;
+    border-color: #736b5e;
+    color: #e8e6e3;
 }
 .container {
     width: 80%;
@@ -30,7 +34,7 @@ input[type="text"], input[type="password"], textarea {
 
 input[type="submit"], button {
     min-width: 8em;
-    background-color: #4CAF50;
+    background-color: #4b71c7;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
@@ -40,7 +44,7 @@ input[type="submit"], button {
 }
 
 input[type="submit"]:hover, button:hover {
-    background-color: #45a049;
+    background-color: #3356aa;
 }
 
 .login-parent {
@@ -54,4 +58,26 @@ input[type="submit"]:hover, button:hover {
     min-height: 1em;
     resize: none;
     overflow-y: hidden;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.buttons-container form {
+    display: inline; /* Makes the form display inline */
+}
+
+.buttons-container button {
+    margin-right: 10px; /* Adds space between the buttons */
+}
+
+.red {
+    background-color: #b94c4c;
+}
+
+.red:hover {
+    background-color: #963535;
 }
