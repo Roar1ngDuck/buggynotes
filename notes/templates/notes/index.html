@@ -31,8 +31,15 @@
             <button type="button" onclick="document.getElementById('backupFileInput').click();">Load Backup</button>
         </form>
 
-        <!-- Logout Button -->
-        <form action="{% url 'logout' %}" method="post">
+        <!-- Search Form -->
+        <form action="{% url 'index' %}" method="post" style="display: flex; align-items: center;">
+            {% csrf_token %}
+            <input type="text" name="search" placeholder="Search notes..." value="{{ request.POST.search|default_if_none:'' }}" style="margin-right: 10px;">
+            <button type="submit" style="margin-right: 10px;">Search</button>
+        </form>
+
+          <!-- Logout Button -->
+          <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button class="red" type="submit">Logout</button>
         </form>

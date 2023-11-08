@@ -31,6 +31,10 @@ function setupTextAreaResize() {
 function setupSvgDrawing() {
   const strokeWidth = 2;
     const SVG = document.getElementById("SVG");
+
+    if (SVG == null) {
+        return;
+    }
     
     function createPencil() {
         let pencilCoordinates;

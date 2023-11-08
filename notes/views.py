@@ -6,15 +6,28 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, get_object_or_404, render
-from django.contrib import messages
-import pickle
-import json
-import io
 from .helpers import sanitize_svg, optimize_svg
+from django.db import connection
+import pickle
 
 @login_required
 def index(request):
-    notes = request.user.notes.all()
+    # Retrieve the search term from the GET request
+    search_term = request.POST.get('search', '')
+
+    # Direct SQL query without parameterized inputs, leading to SQL injection vulnerability
+    raw_query = f"SELECT * FROM notes_note WHERE owner_id = {request.user.id} AND content LIKE '%{search_term}%'"
+    notes = connection.cursor().execute(raw_query).fetchall()
+
+    # Convert raw query results into a list of dictionaries to match the columns of the note model
+    notes = [
+        {'id': row[0], 'title': row[1], 'content': row[2], 'is_drawn': row[4]}
+        for row in notes
+    ]
+
+    # This is the proper way to do a search without an SQL injection vulnerability, since Djangos built in ORM methods are safe. 
+    # An alternative is to use a parameterized query.
+    # notes = request.user.notes.all().filter(content__icontains=search_term)
     
     return render(request, "notes/index.html", {'notes': notes})
 
