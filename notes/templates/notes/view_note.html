@@ -8,18 +8,39 @@
     <!-- Back Button -->
     <p><a href="{% url 'index' %}">Back to Notes List</a></p>
 
+    {% if note.is_drawn == 1 %}
+    <!-- The safe filter is used here to allow the user created SVG to render. The SVG has to be sanitized in the code to prevent XSS. -->
+    {{ note.content|safe }}
+    {% endif %}
+
     <!-- Note Form -->
-    <form action="{% url 'view_note' note.id %}" method="post" class="note-form">
+    <form action="{% url 'view_note' note.id note.is_drawn %}" method="post" class="note-form" id="noteForm">
         {% csrf_token %}
         <div class="note">
             <label for="title">Title:</label><br>
             <input type="text" id="title" name="title" value="{{ note.title }}" required><br>
+            {% if note.is_drawn == 1 %}
+            <!-- Hidden field to store SVG content -->
+            <input type="hidden" id="content" name="content" value="">
+            {% else %}
             <label for="content">Content:</label><br>
             <textarea class="note-content" id="content" name="content" required>{{ note.content }}</textarea><br>
+            {% endif %}
         </div>
         <button type="submit">Save</button>
         <button class="red" type="button" onclick="document.getElementById('deleteNoteButton').click();">Delete Note</button>
     </form>
+
+    {% if note.is_drawn == 1 %}
+    <script>
+        // JavaScript to handle the SVG content on form submission
+        document.getElementById('noteForm').addEventListener('submit', function() {
+            var svgElement = document.getElementById('SVG');
+            var svgContent = new XMLSerializer().serializeToString(svgElement);
+            document.getElementById('content').value = svgContent;
+        });
+    </script>
+    {% endif %}
 
     <!-- Delete Note Form -->
     <form action="{% url 'delete_note' note.id %}" method="post" class="note-form">
