@@ -32,6 +32,8 @@ After installation, BuggyNotes will be accessible at `http://localhost:8000/` by
 - **View Note**: Edit your existing notes.
 - **Backup Notes**: Create and load a backup of your notes.
 
+In the ```example_exploit_payloads``` directory, there are example exploits for all the vulnerabilities in the app.
+
 (Optionally) BuggyNotes comes with two default user accounts pre-created for demonstration purposes:
 
 - **Username**: badpickle
