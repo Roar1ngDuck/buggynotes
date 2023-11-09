@@ -12,14 +12,14 @@ import pickle
 
 @login_required
 def index(request):
-    # Retrieve the search term from the GET request
+    # Retrieve the search term from the POST request
     search_term = request.POST.get('search', '')
 
     # Direct SQL query without parameterized inputs, leading to SQL injection vulnerability
     raw_query = f"SELECT * FROM notes_note WHERE owner_id = {request.user.id} AND content LIKE '%{search_term}%'"
     notes = connection.cursor().execute(raw_query).fetchall()
 
-    # Convert raw query results into a list of dictionaries to match the columns of the note model
+    # Convert raw query results into a list of dictionaries to match the note model
     notes = [
         {'id': row[0], 'title': row[1], 'content': row[2], 'is_drawn': row[4]}
         for row in notes
@@ -82,7 +82,7 @@ def backup_notes(request):
     # Make sure this view is only accessible by a POST request
     if request.method == 'POST':
         # Query all notes for the current user
-        notes = Note.objects.filter(owner=request.user) # TODO: Put 'user.notes.all()' here
+        notes = request.user.notes.all()
 
         # Serialize the notes with pickle. Using pickle leads to an insecure deserialization vulnerability in 'load_backup'.
         serialized_notes = pickle.dumps(list(notes.values()))
@@ -111,6 +111,7 @@ def load_backup(request):
             for note_data in notes_data:
                 # Create new Note instances or update existing ones
                 unique = {'id': note_data['id']}
+                note_data["content"] = sanitize_svg(note_data["content"])
                 Note.objects.update_or_create(defaults=note_data, **unique)
     
     return redirect('index')
