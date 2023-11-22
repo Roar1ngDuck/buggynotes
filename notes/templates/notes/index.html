@@ -56,8 +56,8 @@
                 {% else %}
                 <!-- The 'safe' filter used here makes Django not escape the user inputted string, causing a cross site scripting (XSS) vulnerability -->
                 <p>{{ note.content|safe|linebreaks }}</p>
-                {% endif %}
                 <!-- <p>{{ note.content|linebreaks }}</p> -->
+                {% endif %}
                 <p><a href="{% url 'view_note' note.id note.is_drawn %}">View Note</a></p>
             </div>
         {% empty %}
