@@ -9,6 +9,7 @@ from django.shortcuts import redirect, get_object_or_404, render
 from .helpers import sanitize_svg, optimize_svg
 from django.db import connection
 import pickle
+import json
 
 @login_required
 def index(request):
